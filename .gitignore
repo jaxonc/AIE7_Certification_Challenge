@@ -219,3 +219,10 @@ out/
 # Frontend build artifacts
 dist/
 build/
+
+# Project-specific directories
+sample_notebooks/
+sample_output/
+
+# Project-specific files
+collection_metadata.json
