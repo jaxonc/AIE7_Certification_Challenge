@@ -51,7 +51,7 @@ npm start
 
 ### Example Queries
 
-- "What's the nutrition info for UPC 028400596008?"
+- "What's are the ingredients for UPC 041548750927?"
 - "Tell me about Cheetos Flamin' Hot"
 - "Validate UPC code 123456789012"
 - "Find products with high protein content"

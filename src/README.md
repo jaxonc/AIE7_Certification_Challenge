@@ -113,7 +113,7 @@ npm run dev
 
 ### UPC Code Queries
 ```
-"What's the nutrition info for UPC 028400596008?"
+"What's are the ingredients for UPC 041548750927?"
 "Validate UPC code 123456789012"
 "I have a product with UPC 0-28400-43330-3, tell me about it"
 ```

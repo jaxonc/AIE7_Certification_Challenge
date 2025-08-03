@@ -133,7 +133,7 @@ The frontend will start on http://localhost:3000
 
 Once you're in the chat interface, try these:
 
-- `"What's the nutrition info for UPC 028400596008?"`
+- `"What's are the ingredients for UPC 041548750927?"`
 - `"Tell me about Cheetos Flamin' Hot chips"`
 - `"Validate UPC code 123456789012"`
 - `"Find products with high protein content"`

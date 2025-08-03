@@ -373,7 +373,7 @@ export default function Chat() {
               </button>
             </div>
             <div className="mt-2 text-xs text-gray-500">
-              💡 Try: "What's the nutrition info for UPC 028400596008?" or "Tell me about hot chips"
+              💡 Try: "What's are the ingredients for UPC 041548750927?" or "Tell me about hot chips upc 028400433303"
             </div>
           </div>
         </div>
