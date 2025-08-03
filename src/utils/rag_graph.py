@@ -10,6 +10,7 @@ from langchain_openai import ChatOpenAI
 from langgraph.graph import START, StateGraph
 from typing_extensions import List, TypedDict
 from langchain_core.documents import Document
+from .prompts import get_rag_prompt
 import os
 
 def build_rag_graph():
@@ -65,17 +66,7 @@ def build_rag_graph():
         return {"context" : retrieved_docs}
 
     # Define RAG prompt
-    RAG_PROMPT = """\
-You are a helpful assistant who answers questions based on provided context. You must only use the provided context, and cannot use your own knowledge.
-
-### Question
-{question}
-
-### Context
-{context}
-"""
-
-    rag_prompt = ChatPromptTemplate.from_template(RAG_PROMPT)
+    rag_prompt = ChatPromptTemplate.from_template(get_rag_prompt())
 
     # Initialize LLM
     llm = ChatOpenAI(model="gpt-4.1-nano")

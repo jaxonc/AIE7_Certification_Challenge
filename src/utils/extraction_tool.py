@@ -4,6 +4,7 @@ from langchain_core.messages import SystemMessage, HumanMessage
 from langchain_core.output_parsers import JsonOutputParser
 from pydantic import BaseModel, Field
 import json
+from .prompts import get_upc_extraction_prompt
 
 
 class UPCExtractionTool(BaseTool):
@@ -43,86 +44,10 @@ class UPCExtractionTool(BaseTool):
             
             parser = JsonOutputParser(pydantic_object=UPCExtraction)
             
-            system_message = """You are an expert at extracting UPC codes and product descriptions from natural language text.
-
-CRITICAL: You MUST return ONLY valid JSON with no extra text, no markdown, no code blocks, no explanations.
-
-Your task: Extract UPC codes (8-12 digit numbers) and product descriptions from the input text.
-
-REQUIRED JSON FORMAT - Return EXACTLY this structure with no extra text:
-{format_instructions}
-
-JSON OUTPUT RULES:
-1. Return ONLY the JSON object, nothing else
-2. NO markdown code blocks (no ```json or ```)  
-3. NO extra text before or after the JSON
-4. Use double quotes for all strings
-5. Use lowercase true/false for booleans
-6. Ensure all brackets and braces are properly closed
-
-EXTRACTION RULES:
-- Extract UPC as digits only (remove spaces, dashes, formatting)
-- UPC codes are 8, 11, or 12 digits long
-- Be generous in interpretation - extract if it could reasonably be a UPC
-- Set found_upc to true only if you find a valid UPC-like number (8+ digits)
-- Extract product descriptions from any context (brand names, product types, etc.)
-
-EXAMPLES OF CORRECT JSON OUTPUT (showing diverse input patterns):
-
-Input: "I have information about a product with the upc code 028400596008 and the description hot fries"
-Output: {{"upc": "028400596008", "description": "hot fries", "confidence": "High", "found_upc": true}}
-
-Input: "I need info on UPC 028400433303 for hot chips"
-Output: {{"upc": "028400433303", "description": "hot chips", "confidence": "High", "found_upc": true}}
-
-Input: "Looking for product 0-28400-43330-3 which is spicy potato chips"  
-Output: {{"upc": "028400433303", "description": "spicy potato chips", "confidence": "High", "found_upc": true}}
-
-Input: "Can you find details on 28400433303?"
-Output: {{"upc": "028400433303", "description": "", "confidence": "Medium", "found_upc": true}}
-
-Input: "What's the nutrition info for Lay's Classic Chips UPC: 028400433303?"
-Output: {{"upc": "028400433303", "description": "Lay's Classic Chips", "confidence": "High", "found_upc": true}}
-
-Input: "Check out this 123456789012 cereal I bought"  
-Output: {{"upc": "123456789012", "description": "cereal", "confidence": "High", "found_upc": true}}
-
-Input: "The cookies have barcode 987654321098"
-Output: {{"upc": "987654321098", "description": "cookies", "confidence": "High", "found_upc": true}}
-
-Input: "What product has UPC 555666777888?"
-Output: {{"upc": "555666777888", "description": "", "confidence": "High", "found_upc": true}}
-
-NEGATIVE EXAMPLES (when to refuse extraction):
-
-Input: "How do UPC codes work?" 
-Output: {{"upc": "", "description": "", "confidence": "High", "found_upc": false}}
-
-Input: "Tell me about chips"
-Output: {{"upc": "", "description": "chips", "confidence": "Low", "found_upc": false}}
-
-Input: "What's the weather today?"
-Output: {{"upc": "", "description": "", "confidence": "High", "found_upc": false}}
-
-Input: "Thanks for that information"
-Output: {{"upc": "", "description": "", "confidence": "High", "found_upc": false}}
-
-Input: "Explain UPC check digit calculation"
-Output: {{"upc": "", "description": "", "confidence": "High", "found_upc": false}}
-
-Input: "I need help with my homework"
-Output: {{"upc": "", "description": "", "confidence": "High", "found_upc": false}}
-
-Input: "The phone number is 1234567890"
-Output: {{"upc": "", "description": "", "confidence": "High", "found_upc": false}}
-
-Input: "My address is 123 Main Street, zip code 12345"
-Output: {{"upc": "", "description": "", "confidence": "High", "found_upc": false}}
-
-REMEMBER: Return ONLY the JSON object with no extra text or formatting."""
+            system_message = get_upc_extraction_prompt(parser.get_format_instructions())
 
             messages = [
-                SystemMessage(content=system_message.format(format_instructions=parser.get_format_instructions())),
+                SystemMessage(content=system_message),
                 HumanMessage(content=f"Extract UPC and description from: {input_text}")
             ]
             
