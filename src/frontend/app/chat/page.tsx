@@ -2,13 +2,19 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { Send, Bot, User, Loader2, Coffee, Settings, ArrowLeft } from 'lucide-react'
+import { Send, Bot, User, Loader2, Coffee, Settings, ArrowLeft, Activity } from 'lucide-react'
 import axios from 'axios'
 
 interface Message {
   id: string
   text: string
   sender: 'user' | 'agent'
+  timestamp: Date
+}
+
+interface ProgressStep {
+  step: string
+  node: string
   timestamp: Date
 }
 
@@ -23,6 +29,7 @@ export default function Chat() {
   const [messages, setMessages] = useState<Message[]>([])
   const [inputText, setInputText] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [progressSteps, setProgressSteps] = useState<ProgressStep[]>([])
   const [capabilities, setCapabilities] = useState<AgentCapabilities | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
@@ -32,7 +39,7 @@ export default function Chat() {
 
   useEffect(() => {
     scrollToBottom()
-  }, [messages])
+  }, [messages, progressSteps])
 
   useEffect(() => {
     const initializeApp = async () => {
@@ -80,16 +87,70 @@ export default function Chat() {
     setMessages(prev => [...prev, userMessage])
     setInputText('')
     setIsLoading(true)
+    setProgressSteps([])
+
+    // Add immediate feedback
+    setProgressSteps([{
+      step: "Connecting to agent...",
+      node: "connection",
+      timestamp: new Date()
+    }])
 
     try {
-      const response = await axios.post('/api/agent/chat', {
-        message: inputText,
-        session_id: null
+      let finalResponse = ''
+      
+      // Use EventSource for real-time progress tracking
+      const ssePromise = new Promise<void>((resolve, reject) => {
+        const directUrl = `http://localhost:8000/api/agent/chat/stream-sse?message=${encodeURIComponent(inputText)}`
+        const eventSource = new EventSource(directUrl)
+
+        eventSource.onopen = () => {
+          console.log('✅ SSE connection opened')
+        }
+
+        eventSource.onmessage = (event) => {
+          try {
+            const data = JSON.parse(event.data)
+            
+            if (data.type === 'progress') {
+              setProgressSteps(prev => [...prev, {
+                step: data.step,
+                node: data.node,
+                timestamp: new Date()
+              }])
+            } else if (data.type === 'response') {
+              finalResponse = data.content
+              eventSource.close()
+              resolve()
+            } else if (data.type === 'error') {
+              eventSource.close()
+              reject(new Error(data.content))
+            }
+          } catch (parseError) {
+            console.warn('Failed to parse SSE data:', event.data, parseError)
+          }
+        }
+
+        eventSource.onerror = (error) => {
+          console.error('SSE connection error:', error)
+          eventSource.close()
+          reject(new Error('SSE connection failed'))
+        }
+
+        // Timeout after 60 seconds
+        setTimeout(() => {
+          if (eventSource.readyState !== EventSource.CLOSED) {
+            eventSource.close()
+            reject(new Error('SSE connection timeout'))
+          }
+        }, 60000)
       })
+
+      await ssePromise
 
       const agentMessage: Message = {
         id: (Date.now() + 1).toString(),
-        text: response.data.response,
+        text: finalResponse || 'No response generated',
         sender: 'agent',
         timestamp: new Date()
       }
@@ -106,6 +167,8 @@ export default function Chat() {
       setMessages(prev => [...prev, errorMessage])
     } finally {
       setIsLoading(false)
+      // Don't clear progress steps immediately - let them be visible briefly
+      setTimeout(() => setProgressSteps([]), 1000)
     }
   }
 
@@ -201,10 +264,44 @@ export default function Chat() {
                   <Bot size={16} />
                 </div>
                 <div className="chat-bubble agent-bubble">
-                  <div className="loading-dots">
-                    <div className="loading-dot"></div>
-                    <div className="loading-dot"></div>
-                    <div className="loading-dot"></div>
+                  <div className="space-y-2">
+                    {progressSteps.length > 0 ? (
+                      <div className="space-y-1">
+                        {progressSteps.map((step, index) => {
+                          // Get appropriate icon and color based on step content
+                          const getStepIcon = (stepText: string) => {
+                            if (stepText.includes('Analyzing') || stepText.includes('Starting')) {
+                              return <Activity className="h-3 w-3 text-blue-500 animate-pulse" />
+                            } else if (stepText.includes('AI agent') || stepText.includes('thinking')) {
+                              return <Bot className="h-3 w-3 text-purple-500 animate-pulse" />
+                            } else if (stepText.includes('UPC') || stepText.includes('validating')) {
+                              return <Activity className="h-3 w-3 text-orange-500 animate-pulse" />
+                            } else if (stepText.includes('USDA') || stepText.includes('database')) {
+                              return <Activity className="h-3 w-3 text-green-500 animate-pulse" />
+                            } else if (stepText.includes('web') || stepText.includes('Searching web')) {
+                              return <Activity className="h-3 w-3 text-cyan-500 animate-pulse" />
+                            } else if (stepText.includes('knowledge base') || stepText.includes('rag')) {
+                              return <Activity className="h-3 w-3 text-indigo-500 animate-pulse" />
+                            } else if (stepText.includes('Preparing') || stepText.includes('Finalizing')) {
+                              return <Activity className="h-3 w-3 text-emerald-500 animate-pulse" />
+                            }
+                            return <Activity className="h-3 w-3 text-blue-500 animate-pulse" />
+                          }
+                          
+                          return (
+                            <div key={index} className="flex items-center space-x-2 text-sm">
+                              {getStepIcon(step.step)}
+                              <span className="text-gray-700">{step.step}</span>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    ) : (
+                      <div className="flex items-center space-x-2 text-sm">
+                        <Loader2 className="h-4 w-4 animate-spin text-blue-500" />
+                        <span className="text-gray-700">Connecting to agent...</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

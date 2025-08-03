@@ -199,38 +199,111 @@ async def rag_query(request: RAGRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"RAG error: {str(e)}")
 
-# Streaming agent chat endpoint
-@app.post("/api/agent/chat/stream")
-async def agent_chat_stream(request: AgentChatRequest):
+
+# SSE endpoint for agent chat with progress tracking (GET)
+@app.get("/api/agent/chat/stream-sse")
+async def agent_chat_stream_sse(message: str):
     """
-    Streaming version of agent chat for real-time responses
+    SSE version of agent chat with real-time progress updates using GET
     """
     if main_agent is None:
         raise HTTPException(status_code=500, detail="Agent system not initialized")
     
     async def generate():
         try:
+            import json
             # Create a human message from the user input
-            user_message = HumanMessage(content=request.message)
+            user_message = HumanMessage(content=message)
             
-            # For streaming, we'll invoke the agent and yield the response
-            # Note: LangGraph doesn't have built-in streaming, so we simulate it
-            result = main_agent.invoke({"messages": [user_message]})
-            agent_response = result["messages"][-1].content if result["messages"] else "No response generated"
+            final_response_content = None
             
-            # Simulate streaming by yielding chunks
-            words = agent_response.split()
-            for i, word in enumerate(words):
-                if i > 0:
-                    yield " "
-                yield word
-                # Add a small delay to simulate streaming
-                await asyncio.sleep(0.05)
+            # Use LangGraph's streaming capability to track actual node execution
+            for event in main_agent.stream({"messages": [user_message]}):
+                print(f"Stream event: {event}")  # Debug logging
+                
+                # Handle different types of events from the graph
+                for node_name, node_data in event.items():
+                    if node_name == "__start__":
+                        progress_msg = json.dumps({"type": "progress", "step": "Starting analysis...", "node": "start"})
+                        yield f"data: {progress_msg}\n\n"
+                    
+                    elif node_name == "assistant":
+                        progress_msg = json.dumps({"type": "progress", "step": "AI agent analyzing request...", "node": "assistant"})
+                        yield f"data: {progress_msg}\n\n"
+                        
+                        # Capture the assistant's response for final output
+                        if "messages" in node_data and node_data["messages"]:
+                            last_message = node_data["messages"][-1]
+                            if hasattr(last_message, 'content'):
+                                final_response_content = last_message.content
+                    
+                    elif node_name == "tools":
+                        # Extract actual tool information from the node data
+                        progress_msg = json.dumps({"type": "progress", "step": "Executing tools...", "node": "tools"})
+                        yield f"data: {progress_msg}\n\n"
+                        
+                        # Try to identify which tools were called
+                        if "messages" in node_data and node_data["messages"]:
+                            for msg in node_data["messages"]:
+                                if hasattr(msg, 'name'):
+                                    tool_name = msg.name.lower()
+                                    if 'upc' in tool_name:
+                                        progress_msg = json.dumps({"type": "progress", "step": "Extracting and validating UPC codes...", "node": "tools"})
+                                        yield f"data: {progress_msg}\n\n"
+                                    elif 'usda' in tool_name:
+                                        progress_msg = json.dumps({"type": "progress", "step": "Searching USDA Food Database...", "node": "tools"})
+                                        yield f"data: {progress_msg}\n\n"
+                                    elif 'tavily' in tool_name:
+                                        progress_msg = json.dumps({"type": "progress", "step": "Searching the web for food information...", "node": "tools"})
+                                        yield f"data: {progress_msg}\n\n"
+                                    elif 'rag' in tool_name:
+                                        progress_msg = json.dumps({"type": "progress", "step": "Searching product knowledge base...", "node": "tools"})
+                                        yield f"data: {progress_msg}\n\n"
+                    
+                    elif node_name == "__end__":
+                        progress_msg = json.dumps({"type": "progress", "step": "Preparing final response...", "node": "end"})
+                        yield f"data: {progress_msg}\n\n"
+                        
+                        # Get final response from end event if not already captured
+                        if not final_response_content and "messages" in node_data and node_data["messages"]:
+                            last_message = node_data["messages"][-1]
+                            if hasattr(last_message, 'content'):
+                                final_response_content = last_message.content
+            
+            # Send the final response
+            if final_response_content:
+                final_msg = json.dumps({"type": "response", "content": final_response_content})
+                yield f"data: {final_msg}\n\n"
+            else:
+                error_msg = json.dumps({"type": "error", "content": "No response generated"})
+                yield f"data: {error_msg}\n\n"
                 
         except Exception as e:
-            yield f"Error: {str(e)}"
+            import json
+            print(f"Streaming error: {e}")
+            import traceback
+            traceback.print_exc()
+            error_response = json.dumps({"type": "error", "content": f"Error: {str(e)}"})
+            yield f"data: {error_response}\n\n"
     
-    return StreamingResponse(generate(), media_type="text/plain")
+    return StreamingResponse(
+        generate(), 
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Headers": "*", 
+            "Access-Control-Allow-Methods": "*",
+            "X-Accel-Buffering": "no"  # Disable nginx buffering
+        }
+    )
+
+
+
+
+
+
 
 # Get agent capabilities endpoint
 @app.get("/api/agent/capabilities")
