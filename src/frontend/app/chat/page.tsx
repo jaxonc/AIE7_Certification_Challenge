@@ -180,13 +180,51 @@ export default function Chat() {
   }
 
   const formatMessage = (text: string) => {
-    // Simple formatting for better readability
-    return text.split('\\n').map((line, index) => (
-      <div key={index}>
-        {line}
-        {index < text.split('\\n').length - 1 && <br />}
-      </div>
-    ))
+    // Enhanced formatting for better readability
+    const lines = text.split(/\n|\r\n|\r/); // Handle different line ending formats
+    
+    return lines.map((line, index) => {
+      // Handle special formatting
+      if (line.startsWith('##')) {
+        // Main headings
+        return (
+          <div key={index} className="font-bold text-lg mb-2 mt-3 text-gray-800">
+            {line.replace(/^##\s*/, '')}
+          </div>
+        );
+      } else if (line.startsWith('###')) {
+        // Sub headings
+        return (
+          <div key={index} className="font-semibold text-base mb-1 mt-2 text-gray-700">
+            {line.replace(/^###\s*/, '')}
+          </div>
+        );
+      } else if (line.startsWith('**') && line.endsWith('**')) {
+        // Bold text
+        return (
+          <div key={index} className="font-semibold mb-1">
+            {line.replace(/^\*\*|\*\*$/g, '')}
+          </div>
+        );
+      } else if (line.startsWith('- ')) {
+        // Bullet points
+        return (
+          <div key={index} className="ml-4 mb-1">
+            • {line.replace(/^-\s*/, '')}
+          </div>
+        );
+      } else if (line.trim() === '') {
+        // Empty lines for spacing
+        return <div key={index} className="h-2"></div>;
+      } else {
+        // Regular text
+        return (
+          <div key={index} className="mb-1">
+            {line}
+          </div>
+        );
+      }
+    });
   }
 
   const handleReconfigure = () => {
