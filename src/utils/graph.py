@@ -3,14 +3,17 @@ from langchain_core.messages import AnyMessage
 from langgraph.graph.message import add_messages
 from typing import Annotated
 from typing_extensions import TypedDict
-from utils.model import get_model
-from utils.upc_validator import UPCValidatorTool, UPCCheckDigitCalculatorTool
-# from utils.openfoodfacts_tool import OpenFoodFactsTool
-from utils.rag_tool import rag_tool
-from utils.usda_fdc_tool import USDAFoodDataCentralTool
-from utils.extraction_tool import UPCExtractionTool
-from utils.prompts import get_upc_assistant_prompt
-from langchain_community.tools.tavily_search import TavilySearchResults
+from .model import get_model
+from .upc_validator import UPCValidatorTool, UPCCheckDigitCalculatorTool
+# from .openfoodfacts_tool import OpenFoodFactsTool
+from .rag_tool import rag_tool
+from .usda_fdc_tool import USDAFoodDataCentralTool
+from .extraction_tool import UPCExtractionTool
+from .prompts import get_upc_assistant_prompt
+try:
+    from langchain_tavily import TavilySearchResults
+except ImportError:
+    from langchain_community.tools.tavily_search import TavilySearchResults
 from langgraph.prebuilt import ToolNode
 from langgraph.graph import START, StateGraph
 from IPython.display import Image, display
@@ -92,4 +95,19 @@ def build_graph(model_name: str = 'claude-sonnet-4-20250514', display_graph: boo
         display(Image(react_graph.get_graph(xray=True).draw_mermaid_png()))
     return react_graph
 
-# agent_graph = build_graph(model_name="claude-sonnet-4-20250514")
+# Lazy initialization - only build when API keys are available  
+_agent_graph = None
+
+def get_agent_graph():
+    """Get or build the agent graph with lazy initialization"""
+    global _agent_graph
+    if _agent_graph is None:
+        try:
+            _agent_graph = build_graph(model_name="claude-sonnet-4-20250514")
+        except Exception as e:
+            print(f"⚠️ Agent graph initialization deferred: {e}")
+            return None
+    return _agent_graph
+
+# For backward compatibility
+agent_graph = None

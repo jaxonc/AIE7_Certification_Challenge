@@ -1,14 +1,19 @@
 from langchain_core.tools import tool
-from utils.rag_graph import rag_graph
+from .rag_graph import get_rag_graph
 from langchain_core.messages import HumanMessage
 
 @tool
 def rag_tool(query: str) -> str:
     """
-    Search the product knowledge base for information about the given query.
+    Search for information using RAG (Retrieval-Augmented Generation).
+    This tool searches through product documentation and knowledge base.
     """
-    response = rag_graph.invoke({"question": query})
-    return{
-      "messages": [HumanMessage(content=response["response"])],
-      "context": response["context"]
-    }
+    try:
+        rag_graph = get_rag_graph()
+        if rag_graph is None:
+            return "RAG system not available - API keys may not be configured."
+        
+        result = rag_graph.invoke({"question": query})
+        return result.get("response", "No response generated from RAG system.")
+    except Exception as e:
+        return f"Error using RAG tool: {str(e)}"

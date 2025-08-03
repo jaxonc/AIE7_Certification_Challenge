@@ -91,4 +91,19 @@ def build_rag_graph():
     
     return graph
 
-rag_graph = build_rag_graph()
+# Lazy initialization - only build when API keys are available
+_rag_graph = None
+
+def get_rag_graph():
+    """Get or build the RAG graph with lazy initialization"""
+    global _rag_graph
+    if _rag_graph is None:
+        try:
+            _rag_graph = build_rag_graph()
+        except Exception as e:
+            print(f"⚠️ RAG graph initialization deferred: {e}")
+            return None
+    return _rag_graph
+
+# For backward compatibility
+rag_graph = None
