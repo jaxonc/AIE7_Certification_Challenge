@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "🚀 Starting Food Data Agent Development Environment"
+echo "🚀 Starting S.A.V.E. (Simple Autonomous Validation Engine) Development Environment"
 echo "=============================================="
 
 # Function to check if a command exists

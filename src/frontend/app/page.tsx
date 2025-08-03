@@ -27,7 +27,7 @@ export default function Home() {
           <div className="p-3 bg-blue-500 rounded-lg">
             <Coffee className="h-8 w-8 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-800">Food Data Agent</h1>
+          <h1 className="text-3xl font-bold text-gray-800">S.A.V.E. (Certification Challenge Prototype)</h1>
         </div>
         <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-blue-500" />
         <p className="text-gray-600">Loading...</p>

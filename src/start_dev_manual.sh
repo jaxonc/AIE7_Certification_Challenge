@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "🚀 Starting Food Data Agent (Manual uv setup)"
+echo "🚀 Starting S.A.V.E. (Simple Autonomous Validation Engine) - Manual uv setup"
 echo "=============================================="
 
 # Check if we're in the right directory

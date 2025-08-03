@@ -65,7 +65,7 @@ export default function Chat() {
       // Add welcome message
       setMessages([{
         id: '1',
-        text: '👋 Hello! I\'m your Food Data Agent. I can help you with UPC code validation, nutritional information, product searches, and more. Try asking me about a UPC code or food product!',
+        text: '👋 Hello! I\'m SAVE. I can help you with UPC code validation, nutritional information, product searches, and more. Try asking me about a UPC code or food product!',
         sender: 'agent',
         timestamp: new Date()
       }])
@@ -244,7 +244,7 @@ export default function Chat() {
                 <Coffee className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-gray-800">Food Data Agent</h1>
+                <h1 className="text-xl font-bold text-gray-800">S.A.V.E. (Certification Challenge Prototype)</h1>
                 <p className="text-sm text-gray-600">
                   Status: {capabilities?.status === 'online' ? '🟢 Online' : '🔴 Offline'}
                 </p>

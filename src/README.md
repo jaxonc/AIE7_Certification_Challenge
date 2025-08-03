@@ -1,6 +1,6 @@
-# Food Data Agent - Complete Web Application
+# S.A.V.E. - Complete Web Application
 
-A comprehensive AI-powered chatbot system for food data queries, UPC validation, and nutritional information lookup. This application integrates multiple tools and data sources to provide intelligent responses about food products.
+S.A.V.E. (Simple Autonomous Validation Engine) - Certification Challenge Prototype. A comprehensive AI-powered chatbot system for food data queries, UPC validation, and nutritional information lookup. This application integrates multiple tools and data sources to provide intelligent responses about food products.
 
 ## 🏗️ Architecture
 

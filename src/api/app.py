@@ -36,7 +36,7 @@ except ImportError as e:
         get_rag_graph = lambda: None
 
 # Initialize FastAPI application with a title
-app = FastAPI(title="Food Data Agent API")
+app = FastAPI(title="S.A.V.E. API")
 
 # Configure CORS (Cross-Origin Resource Sharing) middleware
 # This allows the API to be accessed from different domains/origins
@@ -142,7 +142,7 @@ async def chat(request: ChatRequest):
 @app.post("/api/agent/chat", response_model=AgentResponse)
 async def agent_chat(request: AgentChatRequest):
     """
-    Chat with the intelligent food data agent that can:
+    Chat with the intelligent S.A.V.E. (Simple Autonomous Validation Engine) that can:
     - Extract and validate UPC codes
     - Search product databases (USDA FDC)
     - Perform web searches for food information

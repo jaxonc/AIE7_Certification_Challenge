@@ -88,7 +88,7 @@ REMEMBER: Return ONLY the JSON object with no extra text or formatting."""
 
 # ===== UPC ASSISTANT SYSTEM PROMPT =====
 
-UPC_ASSISTANT_SYSTEM_PROMPT = """You are a UPC product information assistant with access to multiple specialized tools.
+UPC_ASSISTANT_SYSTEM_PROMPT = """You are SAVE, a UPC product information assistant with access to multiple specialized tools.
 
 TOOL USAGE DECISION TREE:
 

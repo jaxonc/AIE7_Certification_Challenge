@@ -1,6 +1,6 @@
-# Food Data Agent Frontend
+# S.A.V.E. Frontend
 
-A modern React/Next.js frontend for the Food Data Agent chatbot system.
+A modern React/Next.js frontend for the S.A.V.E. (Simple Autonomous Validation Engine) chatbot system.
 
 ## Features
 
