@@ -2,7 +2,8 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { Send, Bot, User, Loader2, Coffee, Settings, ArrowLeft, Activity } from 'lucide-react'
+import { Send, Bot, User, Loader2, Settings, ArrowLeft, Activity } from 'lucide-react'
+import Image from 'next/image'
 import axios from 'axios'
 
 interface Message {
@@ -240,8 +241,8 @@ export default function Chat() {
         <header className="bg-white shadow-sm border-b border-gray-200 p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="p-2 bg-blue-500 rounded-lg">
-                <Coffee className="h-6 w-6 text-white" />
+              <div className="p-2 bg-white rounded-lg">
+                <Image src="/save-icon.png" alt="S.A.V.E. Icon" width={64} height={64} className="text-white" />
               </div>
               <div>
                 <h1 className="text-xl font-bold text-gray-800">S.A.V.E. (Certification Challenge Prototype)</h1>

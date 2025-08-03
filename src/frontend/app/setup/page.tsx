@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { Key, Coffee, CheckCircle, AlertCircle, Info } from 'lucide-react'
+import { Key, CheckCircle, AlertCircle, Info } from 'lucide-react'
+import Image from 'next/image'
 import axios from 'axios'
 
 interface ApiKeys {
@@ -125,8 +126,8 @@ export default function Setup() {
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center space-x-3 mb-4">
-            <div className="p-3 bg-blue-500 rounded-lg">
-              <Coffee className="h-8 w-8 text-white" />
+            <div className="p-3 bg-gradient-to-br from-blue-50 to-indigo-100 rounded-lg">
+              <Image src="/save-icon.png" alt="S.A.V.E. Icon" width={80} height={80} className="text-white" />
             </div>
             <h1 className="text-3xl font-bold text-gray-800">S.A.V.E. (Certification Challenge Prototype)</h1>
           </div>
