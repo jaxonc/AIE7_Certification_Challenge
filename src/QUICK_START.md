@@ -208,4 +208,4 @@ Once everything is running:
 
 ---
 
-**Need help?** Check the full README.md or the individual component documentation in `src/api/` and `src/frontend/`.
+**Need help?** Check the main README.md for comprehensive documentation, or refer to the RAG data generation tools documentation in `rag_data_generation/`.

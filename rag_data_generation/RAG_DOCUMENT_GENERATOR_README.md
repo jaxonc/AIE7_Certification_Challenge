@@ -46,7 +46,7 @@ Each generated document contains the following sections:
 
 ### Basic Usage
 ```python
-from src.utils.rag_document_generator import RAGDocumentGenerator
+from rag_document_generator import RAGDocumentGenerator
 
 # Initialize generator
 generator = RAGDocumentGenerator(rate_limit_delay=1.0)
@@ -164,10 +164,11 @@ All product information is sourced from [OpenFoodFacts](https://world.openfoodfa
 
 ## Integration with Existing Code
 
-This generator is designed to work alongside the existing codebase:
-- Uses similar patterns to the existing `OpenFoodFactsTool`
+This generator is designed to work alongside the existing S.A.V.E. codebase:
+- Uses similar patterns to the existing `OpenFoodFactsTool` in `src/utils/`
 - Follows the project's code structure and conventions
-- Can be imported and used with the existing LangGraph tools
+- Generated documents are used by the RAG system in the main application
+- Can be extended to work with the existing LangGraph tools
 
 ## License and Attribution
 
