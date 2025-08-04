@@ -53,7 +53,9 @@
 
 <h2>Task 7: Assessing Performance</h2>
 
-1. The ensemble retriever has increased performance on 4 out of 6 of the metrics. Most importantly faithfulness, but there was also a sigificant increase in context recall which coincided with the added benefit of exact matching in my use case.
+![Comparison Chart](evaluation/Comparison_chart.png)
+
+1. The ensemble retriever had higher scores than all of the other retrievers on 3 out of 6 of the metrics. Most importantly faithfulness, but there was also a sigificant gap in context recall performance which coincided with the added benefit of exact matching in my use case.
 
 2. There are several changes to the app that I plan to make before demo day but a few are the following:
 	- Checking local database for products UPC matches. This will let the user save time by verifying if we already have the product integrated.
