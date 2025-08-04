@@ -226,3 +226,6 @@ sample_output/
 
 # Project-specific files
 collection_metadata.json
+
+# macOS system files
+.DS_Store

@@ -1,7 +1,11 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "Certification_Challenge"
 version = "0.1.0"
-description = "Add your description here"
+description = "S.A.V.E. (Simple Autonomous Validation Engine) - AI-powered product validation system"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
@@ -27,4 +31,10 @@ dependencies = [
     "tavily-python>=0.5.0",
     "langchain-tavily>=0.2.0",
     "python-multipart>=0.0.12",
+    "rank-bm25>=0.2.2",
 ]
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-dir]
+"" = "src"

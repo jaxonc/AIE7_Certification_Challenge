@@ -281,7 +281,7 @@ wheels = [
 [[package]]
 name = "certification-challenge"
 version = "0.1.0"
-source = { virtual = "." }
+source = { editable = "." }
 dependencies = [
     { name = "cohere" },
     { name = "fastapi" },
@@ -302,6 +302,7 @@ dependencies = [
     { name = "python-multipart" },
     { name = "qdrant-client" },
     { name = "ragas" },
+    { name = "rank-bm25" },
     { name = "rapidfuzz" },
     { name = "tavily-python" },
     { name = "uvicorn" },
@@ -328,6 +329,7 @@ requires-dist = [
     { name = "python-multipart", specifier = ">=0.0.12" },
     { name = "qdrant-client", specifier = ">=1.7.0" },
     { name = "ragas", specifier = "==0.2.10" },
+    { name = "rank-bm25", specifier = ">=0.2.2" },
     { name = "rapidfuzz", specifier = ">=3.0.0" },
     { name = "tavily-python", specifier = ">=0.5.0" },
     { name = "uvicorn", specifier = ">=0.34.2" },
@@ -2278,6 +2280,18 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/2d/cd/2abddd7ae34b659e5ebf68ab943cff45bd89275cd2b0eaf80615b1872eb8/ragas-0.2.10.tar.gz", hash = "sha256:4804abb3622f47a8a04f09f47157dffa943c2f8dd99c483a7cbc5ae6ff562da7", size = 39053529, upload-time = "2025-01-08T07:04:35.481Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/4d/b8/648b65bd9923f8dc188f3d546d17447e212e00973dbced4fb2494dac5e17/ragas-0.2.10-py3-none-any.whl", hash = "sha256:4f5a8ac2dea70e64f4cdf1461b0234c57c4cc5e7be67e90b86f965a9ebbf7f31", size = 175725, upload-time = "2025-01-08T07:04:27.456Z" },
+]
+
+[[package]]
+name = "rank-bm25"
+version = "0.2.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "numpy" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/fc/0a/f9579384aa017d8b4c15613f86954b92a95a93d641cc849182467cf0bb3b/rank_bm25-0.2.2.tar.gz", hash = "sha256:096ccef76f8188563419aaf384a02f0ea459503fdf77901378d4fd9d87e5e51d", size = 8347, upload-time = "2022-02-16T12:10:52.196Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/2a/21/f691fb2613100a62b3fa91e9988c991e9ca5b89ea31c0d3152a3210344f9/rank_bm25-0.2.2-py3-none-any.whl", hash = "sha256:7bd4a95571adadfc271746fa146a4bcfd89c0cf731e49c3d1ad863290adbe8ae", size = 8584, upload-time = "2022-02-16T12:10:50.626Z" },
 ]
 
 [[package]]
