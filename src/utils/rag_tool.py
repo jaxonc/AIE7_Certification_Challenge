@@ -1,5 +1,5 @@
 from langchain_core.tools import tool
-from .advanced_rag_graph import get_rag_graph
+from .ensemble_rag_graph import get_rag_graph
 from langchain_core.messages import HumanMessage
 
 @tool
